@@ -8,7 +8,7 @@ var team = ["Team 1", "Team 2", "team 3"];
 app.get("/generate", function(req, res) {
   res.json(random.shuffle(team));
 });
-
+// start server
 app.listen(3000, function() {
   console.log("Server started ");
 
