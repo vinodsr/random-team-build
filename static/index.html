@@ -1,0 +1,66 @@
+<html>
+<title>Team Selector</title>
+<head>
+  <link rel="stylesheet" href="/css/bootstrap.min.css" >
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.shuffleLetters.js"></script>
+
+
+  <script>
+  var finallist = [];
+$(document).ready(function () {
+  $.ajax({url: "/generate", success: function(result){
+
+    var dist = Object.keys(result).length;
+    var teamid = 0;
+  for(team in result) {
+    console.log('Setting up the team' , team)
+    $("#rowhead").append("<th>"+team+"</th>");
+    $("#rowbody").append("<td id='"+team+"-list'></td>");
+
+        var startindx = teamid;
+        result[team].forEach(elem => {
+          console.log("writing to ",startindx,dist)
+        finallist[startindx]={
+          team : team,
+          person : elem
+        };
+        startindx  = startindx + dist;
+        });
+teamid++;
+  }
+var i=0;
+  for (data in finallist) {
+    elem = finallist[data];
+    i++;
+      $("#"+elem.team+"-list").append("<div id='item-"+i+"'></div>");
+      $("#item-"+i).shuffleLetters({
+          "text": elem.person
+        });
+    
+  }
+  console.log("final list ",finallist)
+  }});
+});
+
+
+  </script>
+</head>
+<body>
+<div class="container">
+<h1 class='text-center' id="heading">DESS Timeout</h1>
+<table class="table" style="width:50%" align="center">
+  <thead>
+    <tr id="rowhead">
+
+</tr>
+</thead>
+<tbody>
+  <tr id="rowbody">
+
+</tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>
