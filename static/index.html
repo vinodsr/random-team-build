@@ -2,27 +2,59 @@
 <title>Team Selector</title>
 <head>
   <link rel="stylesheet" href="/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="/css/flipclock.css" >
+  <link href="https://fonts.googleapis.com/css?family=Exo" rel="stylesheet">
   <script src="/js/jquery.min.js"></script>
   <script src="/js/jquery.shuffleLetters.js"></script>
+  <script type="text/javascript" src="/js/async.min.js"></script>
+    <script type="text/javascript" src="/js/flipclock.min.js"></script>
+  <style>
+  body {
+    font-family: 'Exo', sans-serif;
+  }
 
+  td.s {
+
+  }
+  </style>
 
   <script>
   var finallist = [];
 $(document).ready(function () {
+$(".counter").hide();
+  var clock = $('.counter').FlipClock(10, {
+		clockFace: 'Counter',
+    autoStart : false
+	});
+
+$(document).click(function () {
+		var intconfig =	setInterval(function() {
+			s = clock.decrement();
+      $(".counter").fadeIn();
+    if(clock.getTime().time == 0) {
+      $(".counter").fadeOut();
+      clearInterval(intconfig);
+      shuffleTeam();
+    }
+		}, 1000);
+	});
+var shuffleTeam = function () {
   $.ajax({url: "/generate", success: function(result){
 
     var dist = Object.keys(result).length;
     var teamid = 0;
+    var pc =  100 / dist;
   for(team in result) {
     console.log('Setting up the team' , team)
     $("#rowhead").append("<th>"+team+"</th>");
-    $("#rowbody").append("<td id='"+team+"-list'></td>");
+    $("#rowbody").append("<td width='"+pc+"%' id='"+team.replace(" ","-")+"-list'></td>");
 
         var startindx = teamid;
         result[team].forEach(elem => {
           console.log("writing to ",startindx,dist)
         finallist[startindx]={
           team : team,
+          teamid : team.replace(" ","-"),
           person : elem
         };
         startindx  = startindx + dist;
@@ -30,26 +62,34 @@ $(document).ready(function () {
 teamid++;
   }
 var i=0;
-  for (data in finallist) {
-    elem = finallist[data];
+async.eachSeries (finallist, function(elem, _callback) {
     i++;
-      $("#"+elem.team+"-list").append("<div id='item-"+i+"'></div>");
+      $("#"+elem.teamid+"-list").append("<div id='item-"+i+"'></div>");
       $("#item-"+i).shuffleLetters({
-          "text": elem.person
+          "text": elem.person,
+          callback : function(elem) {
+            _callback();
+          }
         });
-    
-  }
+
+  });
   console.log("final list ",finallist)
   }});
+};
+
 });
 
 
   </script>
 </head>
 <body>
-<div class="container">
-<h1 class='text-center' id="heading">DESS Timeout</h1>
-<table class="table" style="width:50%" align="center">
+<div class="container" style="margin-top:100px">
+<h1 class='text-center' id="heading"></h1>
+<div style=" padding-left: 40%;">
+<div class="counter"></div>
+</div>
+
+<table class="table" style="width:100%;font-size:30px;margin-top:30px" align="center">
   <thead>
     <tr id="rowhead">
 

@@ -9,7 +9,7 @@ app.get("/generate", function(req, res) {
 
   jsonfile.readFile("./config.json", function(err, data) {
     if (err) {
-      console.log(err)
+      console.log(err);
       res.json(prepareMessage(1, err));
       return;
     }
@@ -31,7 +31,17 @@ app.get("/generate", function(req, res) {
       if (currentTeamIdx >= teams.length) {
         currentTeamIdx = 0;
       }
+
     });
+
+    //save the data in a file
+
+    jsonfile.writeFile("result/" + new Date().getTime(), result,
+      function(err) {
+        if (err) {
+          console.error("error in writting file ", err);
+        }
+      });
 
     res.json(result);
   });
