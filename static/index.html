@@ -20,6 +20,7 @@
 
   <script>
   var finallist = [];
+  var done = false;
 $(document).ready(function () {
 $(".counter").hide();
   var clock = $('.counter').FlipClock(10, {
@@ -28,6 +29,8 @@ $(".counter").hide();
 	});
 
 $(document).click(function () {
+  if(done) return ;
+  done = true;
 		var intconfig =	setInterval(function() {
 			s = clock.decrement();
       $(".counter").fadeIn();
